@@ -1,0 +1,255 @@
+CREATE DATABASE RHINO_ZOO_DB;
+
+CREATE OR REPLACE TABLE RHINO_ZOO_DB.PUBLIC.td_zoo_data(
+    record_id INT AUTOINCREMENT,
+    zoo_json VARIANT
+)
+
+INSERT INTO RHINO_ZOO_DB.PUBLIC.td_zoo_data(zoo_json)
+SELECT PARSE_JSON ('
+{
+"zooName": "Cosmic Critters Galactic Zoo",
+"location": "Space Station Delta-7, Sector Gamma-9",
+"establishedDate": "2077-01-01",
+"director": {
+    "name": "Zorp Glorbax",
+    "species": "Xylosian"
+},
+"habitats": [
+    {
+    "id": "H001",
+    "name": "Crystal Caves",
+    "environmentType": "Subterranean",
+    "sizeSqMeters": 1500,
+    "safetyRating": 4.5,
+    "features": ["Luminescent Flora", "Geothermal Vents", "Echo Chambers"],
+    "currentTempCelsius": 15
+    },
+    {
+    "id": "H002",
+    "name": "Azure Aquarium",
+    "environmentType": "Aquatic",
+    "sizeSqMeters": 3000,
+    "safetyRating": 4.8,
+    "features": ["Coral Reef Simulation", "High-Pressure Zone", "Bioluminescent Plankton"],
+    "currentTempCelsius": 22
+    },
+    {
+    "id": "H003",
+    "name": "Floating Forest",
+    "environmentType": "Zero-G Jungle",
+    "sizeSqMeters": 2500,
+    "safetyRating": 4.2,
+    "features": ["Magnetic Vines", "Floating Islands", "Simulated Rain"],
+    "currentTempCelsius": 28
+    },
+    {
+    "id": "H004",
+    "name": "Frozen Tundra",
+    "environmentType": "Arctic",
+    "sizeSqMeters": 1800,
+    "safetyRating": 4.0,
+    "features": ["Ice Caves", "Simulated Aurora"],
+    "currentTempCelsius": -10
+    }
+],
+"creatures": [
+    {
+    "id": "C001",
+    "name": "Gloob",
+    "species": "Gelatinoid",
+    "originPlanet": "Xylar",
+    "diet": "Photosynthesis",
+    "temperament": "Docile",
+    "habitatId": "H001",
+    "acquisitionDate": "2077-01-15",
+    "specialAbilities": null,
+    "healthStatus": { "lastCheckup": "2077-03-01", "status": "Excellent" }
+    },
+    {
+    "id": "C002",
+    "name": "Finblade",
+    "species": "Aqua-Predator",
+    "originPlanet": "Neptunia Prime",
+    "diet": "Carnivore",
+    "temperament": "Aggressive",
+    "habitatId": "H002",
+    "acquisitionDate": "2077-02-01",
+    "specialAbilities": ["Sonar Burst", "Camouflage"],
+    "healthStatus": { "lastCheckup": "2077-03-10", "status": "Good" }
+    },
+    {
+    "id": "C003",
+    "name": "Sky-Wisp",
+    "species": "Aether Flyer",
+    "originPlanet": "Cirrus V",
+    "diet": "Energy Absorption",
+    "temperament": "Shy",
+    "habitatId": "H003",
+    "acquisitionDate": "2077-02-20",
+    "specialAbilities": ["Invisibility", "Phase Shift"],
+    "healthStatus": { "lastCheckup": "2077-03-15", "status": "Fair" }
+    },
+    {
+    "id": "C004",
+    "name": "Krystal Krawler",
+    "species": "Silicate Arthropod",
+    "originPlanet": "Xylar",
+    "diet": "Mineralvore",
+    "temperament": "Neutral",
+    "habitatId": "H001",
+    "acquisitionDate": "2077-03-05",
+    "specialAbilities": ["Crystal Armor", "Burrowing"],
+    "healthStatus": { "lastCheckup": "2077-03-20", "status": "Excellent" }
+    },
+    {
+    "id": "C005",
+    "name": "Ice Strider",
+    "species": "Cryo-Mammal",
+    "originPlanet": "Cryonia",
+    "diet": "Herbivore",
+    "temperament": "Docile",
+    "habitatId": "H004",
+    "acquisitionDate": "2077-03-10",
+    "specialAbilities": ["Thermal Resistance", "Ice Skating"],
+    "healthStatus": { "lastCheckup": "2077-03-25", "status": "Good"}
+    }
+],
+"staff": [
+    {
+    "employeeId": "S001",
+    "name": "Grunga",
+    "role": "Senior Keeper",
+    "species": "Gronk",
+    "assignedHabitatIds": ["H001", "H004"]
+    },
+    {
+    "employeeId": "S002",
+    "name": "Dr. Elara Vance",
+    "role": "Chief Veterinarian",
+    "species": "Human",
+    "assignedHabitatIds": []
+    },
+    {
+    "employeeId": "S003",
+    "name": "Bleep-Bloop",
+    "role": "Maintenance Droid",
+    "species": "Robotic Unit 7",
+    "assignedHabitatIds": ["H002", "H003"]
+    }
+],
+"upcomingEvents": [
+    {
+    "eventId": "E001",
+    "name": "Finblade Feeding Frenzy",
+    "type": "Feeding Show",
+    "scheduledTime": "2077-04-01T14:00:00Z",
+    "locationHabitatId": "H002",
+    "involvedCreatureIds": ["C002"]
+    },
+    {
+    "eventId": "E002",
+    "name": "Sky-Wisp Visibility Demo",
+    "type": "Educational",
+    "scheduledTime": "2077-04-05T11:00:00Z",
+    "locationHabitatId": "H003",
+    "involvedCreatureIds": ["C003"]
+    }
+]
+}
+')
+
+--Профил на зоопарка--
+SELECT zoo_json['zooName'],
+zoo_json['location']
+FROM RHINO_ZOO_DB.PUBLIC.td_zoo_data;
+
+--Достъп до данни вложен обект--
+SELECT 
+zoo_json['director']['name'] AS DIRECTOR_NAME, 
+zoo_json['director']['species'] AS DIRECTOR_SPECIES
+FROM RHINO_ZOO_DB.PUBLIC.td_zoo_data;
+
+--Изброяване на всички същества--
+SELECT 
+creature.VALUE['name'] AS CREATURE_NAME,
+creature.VALUE['species'] AS CREATURE_SPECIES
+FROM RHINO_ZOO_DB.PUBLIC.td_zoo_data,
+LATERAL FLATTEN(INPUT => zoo_json['creatures']) creature;
+
+--Филтриране на същества по произход--
+SELECT 
+creature.VALUE['name'] AS creature_name,
+creature.VALUE['originPlanet'] AS origin_planet
+FROM RHINO_ZOO_DB.PUBLIC.td_zoo_data,
+LATERAL FLATTEN(INPUT => zoo_json['creatures']) creature
+WHERE creature.VALUE['originPlanet'] = 'Xylar';
+
+--Заявка за хабитати по размер--
+SELECT 
+creature.VALUE['name'] AS habitat_name,
+creature.VALUE['environmentType'] AS environment_type,
+creature.VALUE['sizeSqMeters']::NUMBER AS size
+FROM RHINO_ZOO_DB.PUBLIC.td_zoo_data,
+LATERAL FLATTEN(INPUT => zoo_json['habitats']) creature
+WHERE creature.VALUE['sizeSqMeters']::NUMBER > 2000;
+
+--Намиране на същества със специфични способности--
+SELECT 
+creature.VALUE['name']::STRING AS creature_name
+FROM RHINO_ZOO_DB.PUBLIC.td_zoo_data,
+LATERAL FLATTEN(INPUT => zoo_json['creatures']) creature
+WHERE ARRAY_CONTAINS('Camouflage'::VARIANT, creature.VALUE['specialAbilities']);
+
+
+--Проверка на здравния статус на съществата--
+SELECT 
+creature.VALUE['name']::STRING AS creature_name, 
+creature.VALUE['healthStatus']['status']::STRING AS health_status 
+FROM RHINO_ZOO_DB.PUBLIC.td_zoo_data,
+LATERAL FLATTEN(INPUT => zoo_json['creatures']) creature 
+WHERE creature.VALUE['healthStatus']['status'] != 'Excellent';
+
+
+--Разпределения на персонала--
+SELECT 
+staff_member.VALUE['name']::STRING AS staff_name,
+staff_member.VALUE['role']::STRING AS role
+FROM RHINO_ZOO_DB.PUBLIC.td_zoo_data,
+LATERAL FLATTEN(INPUT => zoo_json['staff']) staff_member,
+LATERAL FLATTEN(INPUT => staff_member.VALUE['assignedHabitatIds']) assigned_habitat
+WHERE assigned_habitat.VALUE::STRING = 'H001';
+
+--Брой същества по хабитат--
+SELECT 
+creature.VALUE['habitatId']::STRING AS habitat_id,
+COUNT(*) AS creatures_count
+FROM RHINO_ZOO_DB.PUBLIC.td_zoo_data,
+LATERAL FLATTEN(INPUT => zoo_json['creatures']) creature
+GROUP BY habitat_id;
+
+--Изследване на характеристиките на хабитатите--
+SELECT DISTINCT feature.VALUE::STRING AS feature_name
+FROM RHINO_ZOO_DB.PUBLIC.td_zoo_data,
+LATERAL FLATTEN(INPUT => zoo_json['habitats']) habitat,
+LATERAL FLATTEN(INPUT => habitat.VALUE['features']) feature
+ORDER BY feature_name;
+
+--Детайли за предстоящи събития--
+SELECT 
+event.VALUE['name']::STRING AS event_name,
+event.VALUE['type']::STRING AS event_type,
+TO_TIMESTAMP(event.VALUE['scheduledTime']) AS scheduled_time
+FROM RHINO_ZOO_DB.PUBLIC.td_zoo_data,
+LATERAL FLATTEN(INPUT => zoo_json['upcomingEvents']) event
+ORDER BY scheduled_time;
+
+--Свързване на същества с типовете среда на хабитатите им--
+SELECT 
+creature.VALUE['name']::STRING AS creature_name,
+habitat.VALUE['environmentType']::STRING AS environment_type
+FROM RHINO_ZOO_DB.PUBLIC.td_zoo_data,
+LATERAL FLATTEN(INPUT => zoo_json['creatures']) creature,
+LATERAL FLATTEN(INPUT => zoo_json['habitats']) habitat
+WHERE creature.VALUE['habitatId'] = habitat.VALUE['id']
+ORDER BY creature_name;
